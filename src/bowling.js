@@ -8,16 +8,13 @@ class Bowling {
     }
 
     roll(pins) {
-        if (this.isGameOver()) {
-            throw new Error("Game over");
-        }
-        let currentPoints = pins;
+        this.validate(pins);
 
         if (this.isSpare()) {
-            currentPoints += pins;
+            pins += pins;
         }
 
-        this.points = this.points + currentPoints;
+        this.points = this.points + pins;
         this.resetCurrentFrame();
         this.currentFrame.push(pins);
         this.updateScoreBoard();
@@ -51,10 +48,26 @@ class Bowling {
 
     isSpare() {
         if (this.currentFrame.length === 2) {
-            return (this.currentFrame[0] + this.currentFrame[1]) === 10;
+            let score = this.currentFrame[0] + this.currentFrame[1];
+            return score === 10;
         }
 
         return false;
     }
 
+    validate(pins) {
+        if (this.isGameOver()) {
+            throw new Error("Game over");
+        }
+
+        let leftOverPins = 10;
+        if (this.currentFrame.length === 1 && this.currentFrame[0] !== 10) {
+            leftOverPins -= this.currentFrame[0];
+        }
+
+        if (pins > leftOverPins) {
+            throw new Error("Wrong input, only "+ leftOverPins +" pins can be knocked down.")
+        }
+        return true;
+    }
 }
