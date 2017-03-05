@@ -64,14 +64,55 @@ describe("Bowling game", function () {
         expect(bowling.totalFrames()).toBe(2);
     });
 
-    it("does not allow another roll when game is over", function () {
+    it("does not allow another roll when a game is over", function () {
         let bowling = new Bowling();
         let i;
         for (i = 1; i <= 20; i++) {
             bowling.roll(1);
         }
-
-        expect(bowling.roll()).toBe(false);
+        expect(function () {
+            bowling.roll(1);
+        }).toThrowError("Game over");
     });
 
+    it("tells game is over", function () {
+        let bowling = new Bowling();
+        let i;
+        expect(bowling.isGameOver()).toBeFalsy();
+        for (i = 1; i <= 20; i++) {
+            bowling.roll(1);
+        }
+
+        expect(bowling.isGameOver()).toBeTruthy();
+    });
+
+    it("is a scoreboard", function () {
+        let bowling = new Bowling();
+
+        bowling.roll(1);
+        bowling.roll(9);
+
+        expect(bowling.scoreBoard instanceof Array).toBeTruthy();
+        expect(bowling.scoreBoard).toContain([1, 9]);
+
+    });
+
+    it("awards a spare when knocks down all 10 balls in a spare", function () {
+        let bowling = new Bowling();
+
+        bowling.roll(1);
+        bowling.roll(9);
+
+        expect(bowling.isSpare()).toBeTruthy();
+    });
+
+    it("scores double (spare) in the next ball when knocks down 10 balls in first frame", function () {
+       let bowling = new Bowling();
+       bowling.roll(7);
+       bowling.roll(3);
+       bowling.roll(4);
+       bowling.roll(2);
+
+       expect(bowling.score()).toBe(20);
+    });
 });
