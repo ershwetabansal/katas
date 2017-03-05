@@ -3,6 +3,7 @@ describe("Bowling game", function () {
     it("starts a new game", function () {
         let bowling = new Bowling();
         expect(bowling).toBeDefined();
+        expect(bowling.score()).toBe(0);
     });
 
     it("scores zero on first roll", function () {
@@ -50,20 +51,6 @@ describe("Bowling game", function () {
         expect(bowling.score()).toBe(20);
     });
 
-    it("gives a frame number after a roll", function () {
-        let bowling = new Bowling();
-        bowling.roll(0);
-        bowling.roll(0);
-
-        expect(bowling.totalFrames()).toBe(1);
-
-        bowling.roll(0);
-        expect(bowling.totalFrames()).toBe(1);
-
-        bowling.roll(0);
-        expect(bowling.totalFrames()).toBe(2);
-    });
-
     it("does not allow another roll when a game is over", function () {
         let bowling = new Bowling();
         let i;
@@ -103,7 +90,7 @@ describe("Bowling game", function () {
         }).toThrowError("Wrong input, only 10 pins can be knocked down.");
     });
 
-    it("awards a spare 10 balls are knocked down in one frame", function () {
+    it("awards a spare when 10 balls are knocked down in one frame", function () {
         let bowling = new Bowling();
 
         bowling.roll(0);
@@ -189,8 +176,11 @@ describe("Bowling game", function () {
         let bowling = new Bowling();
 
         bowling.roll(10);
+        expect(bowling.frame.number).toBe(1);
 
-        expect(bowling.totalFrames()).toBe(1);
+        bowling.roll(0);
+        expect(bowling.frame.number).toBe(2);
+
     });
 
     it("scores double in next frame, when previous frame is a strike", function () {
@@ -221,5 +211,78 @@ describe("Bowling game", function () {
         }
 
         expect(bowling.score()).toBe(24);
+    });
+
+    it("is possible to do two consecutive strikes", function () {
+        let bowling = new Bowling();
+
+        bowling.roll(10);
+        expect(bowling.isStrike()).toBeTruthy();
+
+        bowling.roll(10);
+        expect(bowling.isStrike()).toBeTruthy();
+
+        bowling.roll(4);
+        bowling.roll(2);
+
+        expect(bowling.scoreBoard[0].is_strike).toBeTruthy();
+        expect(bowling.scoreBoard[1].is_strike).toBeTruthy();
+        expect(bowling.scoreBoard[2].is_strike).toBeFalsy();
+
+        expect(bowling.scoreBoard[0].score).toEqual([24]);
+        expect(bowling.scoreBoard[1].score).toEqual([16]);
+        expect(bowling.scoreBoard[2].score).toEqual([4, 2]);
+    });
+
+    it("allows one extra ball if it is a spare in 10th frame",function () {
+        let bowling = new Bowling();
+
+        // Given that there are all misses in first 9 frames
+        for (let i = 1; i <= 18; i++) {
+            bowling.roll(0);
+        }
+
+        // And then a spare in 10th frame
+        bowling.roll(2);
+        bowling.roll(8);
+        expect(bowling.isGameOver()).toBeFalsy();
+        expect(bowling.score()).toBe(10);
+
+        bowling.roll(5);
+        expect(bowling.isGameOver()).toBeTruthy();
+        expect(bowling.score()).toBe(15);
+    });
+
+    it("allows two extra balls if it is a strike in 10th frame",function () {
+        let bowling = new Bowling();
+
+        // Given that there are all misses in first 9 frames
+        for (let i = 1; i <= 18; i++) {
+            bowling.roll(0);
+        }
+
+        // And then a strike in 10th frame
+        bowling.roll(10);
+        expect(bowling.isGameOver()).toBeFalsy();
+
+        // Another strike
+        bowling.roll(10);
+        expect(bowling.isGameOver()).toBeFalsy();
+
+        // Another strike
+        bowling.roll(10);
+        expect(bowling.isGameOver()).toBeTruthy();
+        expect(bowling.scoreBoard[9].score).toEqual([30]);
+    });
+
+    it("is a perfect game with 12 strikes and scores 300", function () {
+        let bowling = new Bowling();
+
+        while(!bowling.isGameOver()) {
+            bowling.roll(10);
+            expect(bowling.isStrike()).toBeTruthy();
+        }
+
+        expect(bowling.score()).toBe(300);
     });
 });
