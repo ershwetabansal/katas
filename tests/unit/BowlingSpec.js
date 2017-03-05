@@ -92,8 +92,7 @@ describe("Bowling game", function () {
         bowling.roll(9);
 
         expect(bowling.scoreBoard instanceof Array).toBeTruthy();
-        expect(bowling.scoreBoard).toContain([1, 9]);
-
+        expect(bowling.scoreBoard[0].score).toEqual([1, 9]);
     });
 
     it("has only 10 pins to knock down", function () {
@@ -111,18 +110,27 @@ describe("Bowling game", function () {
         bowling.roll(0);
         expect(bowling.isSpare()).toBeFalsy();
 
+        bowling = new Bowling();
         bowling.roll(1);
         bowling.roll(9);
         expect(bowling.isSpare()).toBeTruthy();
 
+        bowling = new Bowling();
         bowling.roll(2);
         bowling.roll(4);
         expect(bowling.isSpare()).toBeFalsy();
 
-        bowling.roll(0);
+        bowling = new Bowling();
         bowling.roll(10);
+        bowling.roll(0);
         expect(bowling.isSpare()).toBeFalsy();
 
+        bowling = new Bowling();
+        bowling.roll(0);
+        bowling.roll(10);
+        expect(bowling.isSpare()).toBeTruthy();
+
+        bowling = new Bowling();
         bowling.roll(2);
         expect(function () {
             bowling.roll(9)
@@ -160,7 +168,7 @@ describe("Bowling game", function () {
         bowling = new Bowling();
         bowling.roll(0);
         bowling.roll(10);
-        expect(bowling.isStrike()).toBeTruthy();
+        expect(bowling.isStrike()).toBeFalsy();
 
         bowling = new Bowling();
         bowling.roll(1);
@@ -185,7 +193,33 @@ describe("Bowling game", function () {
         expect(bowling.totalFrames()).toBe(1);
     });
 
-    it("scores 24, A strike in the first frame, followed by three and then four pins, followed by all misses", function () {
+    it("scores double in next frame, when previous frame is a strike", function () {
+       let bowling = new Bowling();
 
+       // Srike in first frame
+       bowling.roll(10);
+
+       // Second frame
+       bowling.roll(2);
+       bowling.roll(6);
+
+       expect(bowling.score()).toBe(26);
+    });
+
+    it("scores 24 when there is a strike in the first frame, followed by three and then four pins, followed by all misses", function () {
+        let bowling = new Bowling();
+
+        // Strike
+        bowling.roll(10);
+
+        // Second frame
+        bowling.roll(3);
+        bowling.roll(4);
+
+        for (let i = 1; i <= 16; i++) {
+            bowling.roll(0);
+        }
+
+        expect(bowling.score()).toBe(24);
     });
 });
