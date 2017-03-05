@@ -75,7 +75,7 @@ describe("Bowling game", function () {
         }).toThrowError("Game over");
     });
 
-    it("tells game is over", function () {
+    it("is over", function () {
         let bowling = new Bowling();
         expect(bowling.isGameOver()).toBeFalsy();
         for (let i = 1; i <= 20; i++) {
@@ -96,13 +96,37 @@ describe("Bowling game", function () {
 
     });
 
-    it("awards a spare when knocks down all 10 balls in a spare", function () {
+    it("has only 10 pins to knock down", function () {
         let bowling = new Bowling();
+
+        expect(function () {
+            bowling.roll(11)
+        }).toThrowError("Wrong input, only 10 pins can be knocked down.");
+    });
+
+    it("awards a spare when knocks down all 10 balls in one frame", function () {
+        let bowling = new Bowling();
+
+        bowling.roll(0);
+        bowling.roll(0);
+        expect(bowling.isSpare()).toBeFalsy();
 
         bowling.roll(1);
         bowling.roll(9);
-
         expect(bowling.isSpare()).toBeTruthy();
+
+        bowling.roll(2);
+        bowling.roll(4);
+        expect(bowling.isSpare()).toBeFalsy();
+
+        bowling.roll(10);
+        bowling.roll(10);
+        expect(bowling.isSpare()).toBeFalsy();
+
+        bowling.roll(2);
+        expect(function () {
+            bowling.roll(10)
+        }).toThrowError("Wrong input, only 8 pins can be knocked down.");
     });
 
     it("scores double (spare) in the next ball when knocks down 10 balls in first frame", function () {
@@ -115,7 +139,7 @@ describe("Bowling game", function () {
        expect(bowling.score()).toBe(20);
     });
 
-    it("A spare in the first frame, followed by three pins, followed by all misses scores 16", function () {
+    it("scores 16, when a spare is in the first frame, followed by three pins, followed by all misses", function () {
         let bowling = new Bowling();
 
         bowling.roll(1);
@@ -126,5 +150,10 @@ describe("Bowling game", function () {
         }
 
         expect(bowling.score()).toBe(16);
+    });
+
+
+    it("scores 24, A strike in the first frame, followed by three and then four pins, followed by all misses", function () {
+
     });
 });
