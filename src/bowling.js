@@ -17,6 +17,10 @@ class Bowling {
         this.points = this.points + pins;
         this.resetCurrentFrame();
         this.currentFrame.push(pins);
+        if (this.currentFrame.length === 1 && this.isStrike()) {
+            this.currentFrame.push(0);
+            this.totalRolls++;
+        }
         this.updateScoreBoard();
         this.totalRolls ++;
         return true;
@@ -47,7 +51,7 @@ class Bowling {
     }
 
     isSpare() {
-        if (this.currentFrame.length === 2) {
+        if (this.currentFrame.length === 2 && !this.isStrike()) {
             return (this.currentFrame[0] + this.currentFrame[1]) === 10;
         }
 
@@ -71,8 +75,12 @@ class Bowling {
     }
 
     isStrike() {
+        if (this.currentFrame.length === 1) {
+            return this.currentFrame[0] === 10;
+        }
+
         if (this.currentFrame.length === 2) {
-            return (this.currentFrame[0] + this.currentFrame[1]) === 20;
+            return this.currentFrame[0] === 10 || this.currentFrame[1] === 10;
         }
 
         return false;
