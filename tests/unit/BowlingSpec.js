@@ -104,7 +104,7 @@ describe("Bowling game", function () {
         }).toThrowError("Wrong input, only 10 pins can be knocked down.");
     });
 
-    it("awards a spare when knocks down all 10 balls in one frame", function () {
+    it("awards a spare 10 balls are knocked down in one frame", function () {
         let bowling = new Bowling();
 
         bowling.roll(0);
@@ -152,6 +152,22 @@ describe("Bowling game", function () {
         expect(bowling.score()).toBe(16);
     });
 
+    it("awards a strike 20 balls are knocked down in one frame", function () {
+        let bowling = new Bowling();
+
+        bowling.roll(10);
+        bowling.roll(10);
+        expect(bowling.isStrike()).toBeTruthy();
+
+        bowling = new Bowling();
+        bowling.roll(1);
+        expect(bowling.isStrike()).toBeFalsy();
+
+        bowling = new Bowling();
+        bowling.roll(1);
+        bowling.roll(2);
+        expect(bowling.isStrike()).toBeFalsy();
+    });
 
     it("scores 24, A strike in the first frame, followed by three and then four pins, followed by all misses", function () {
 
