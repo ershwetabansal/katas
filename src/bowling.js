@@ -26,25 +26,47 @@ class Bowling {
     }
 
     isGameOver() {
+        // Game is not over until 10 frames are reached
         if (this.scoreBoard.length < 10 || (!this.scoreBoard[9].is_strike && this.scoreBoard[9].score.length < 2)) {
             return false;
         }
 
+        // Game is not over if there is a strike in the last frame
         if (this.scoreBoard.length >= 10 && this.scoreBoard[9].is_strike) {
-            if ((this.frame.number === 11 && this.frame.pins.length === 2) || (this.frame.number === 12)) {
-                return true;
-            }
-            return false;
+            // Game will be over after two more rolls
+            return (this.frame.number === 11 && this.frame.pins.length === 2) || (this.frame.number === 12);
         }
 
+        // Game is not over if there is a spare in the last frame
         if (this.scoreBoard.length >= 10 && this.scoreBoard[9].is_spare) {
-            if (this.frame.number === 11 && this.frame.pins.length === 1) {
-                return true;
-            }
-            return false;
+            // Game will be over after one more rolls
+            return this.frame.number === 11 && this.frame.pins.length === 1;
         }
 
         return true;
+    }
+
+    isSpare() {
+        if (this.frame.pins.length === 2 && !this.isStrike()) {
+            return (this.frame.pins[0] + this.frame.pins[1]) === 10;
+        }
+
+        return false;
+    }
+
+    isStrike() {
+        if (this.frame.pins.length >= 1) {
+            return this.frame.pins[0] >= 10;
+        }
+
+        return false;
+    }
+
+    resetThisFrame() {
+        if (this.frame.pins.length === 2 || this.isStrike()) {
+            this.frame.number ++;
+            this.frame.pins = [];
+        }
     }
 
     updateScoreBoard() {
@@ -94,21 +116,6 @@ class Bowling {
         }
     }
 
-    resetThisFrame() {
-        if (this.frame.pins.length === 2 || this.isStrike()) {
-            this.frame.number ++;
-            this.frame.pins = [];
-        }
-    }
-
-    isSpare() {
-        if (this.frame.pins.length === 2 && !this.isStrike()) {
-            return (this.frame.pins[0] + this.frame.pins[1]) === 10;
-        }
-
-        return false;
-    }
-
     validate(pins) {
         if (this.isGameOver()) {
             throw new Error("Game over");
@@ -125,11 +132,4 @@ class Bowling {
         return true;
     }
 
-    isStrike() {
-        if (this.frame.pins.length >= 1) {
-            return this.frame.pins[0] >= 10;
-        }
-
-        return false;
-    }
 }
