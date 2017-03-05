@@ -48,8 +48,7 @@ class Bowling {
 
     isSpare() {
         if (this.currentFrame.length === 2) {
-            let score = this.currentFrame[0] + this.currentFrame[1];
-            return score === 10;
+            return (this.currentFrame[0] + this.currentFrame[1]) === 10;
         }
 
         return false;
@@ -69,5 +68,13 @@ class Bowling {
             throw new Error("Wrong input, only "+ leftOverPins +" pins can be knocked down.")
         }
         return true;
+    }
+
+    isStrike() {
+        if (this.currentFrame.length === 2) {
+            return (this.currentFrame[0] + this.currentFrame[1]) === 20;
+        }
+
+        return false;
     }
 }
