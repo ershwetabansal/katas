@@ -10,20 +10,20 @@ class Bowling {
     roll(pins) {
         this.validate(pins);
 
-        if (this.isSpare()) {
+        if (this.isSpare() || this.isLastFrameWasStrike()) {
             pins += pins;
         }
 
         this.points = this.points + pins;
-        this.resetCurrentFrame();
+        this.resetCurrentFrameAfterTwoRolls();
         this.currentFrame.push(pins);
-        if (this.currentFrame.length === 1 && this.isStrike()) {
-            this.currentFrame.push(0);
-            this.totalRolls++;
-        }
         this.updateScoreBoard();
         this.totalRolls ++;
         return true;
+    }
+
+    isLastFrameWasStrike() {
+        return this.scoreBoard.length > 0 && this.scoreBoard[this.scoreBoard.length - 1].is_strike;
     }
 
     score() {
@@ -34,7 +34,7 @@ class Bowling {
         return Math.floor(this.totalRolls / 2);
     }
 
-    resetCurrentFrame() {
+    resetCurrentFrameAfterTwoRolls() {
         if (this.currentFrame.length === 2) {
             this.currentFrame = [];
         }
@@ -45,8 +45,17 @@ class Bowling {
     }
 
     updateScoreBoard() {
+        if (this.currentFrame.length === 1 && this.isStrike()) {
+            this.currentFrame.push(0);
+            this.totalRolls++;
+        }
+
         if (this.currentFrame.length === 2) {
-            this.scoreBoard.push(this.currentFrame);
+            this.scoreBoard.push({
+                is_strike : this.isStrike(),
+                is_spare : this.isSpare(),
+                score : this.currentFrame
+            });
         }
     }
 
@@ -75,12 +84,8 @@ class Bowling {
     }
 
     isStrike() {
-        if (this.currentFrame.length === 1) {
+        if (this.currentFrame.length >= 1) {
             return this.currentFrame[0] === 10;
-        }
-
-        if (this.currentFrame.length === 2) {
-            return this.currentFrame[0] === 10 || this.currentFrame[1] === 10;
         }
 
         return false;
