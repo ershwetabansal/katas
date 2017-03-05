@@ -77,9 +77,8 @@ describe("Bowling game", function () {
 
     it("tells game is over", function () {
         let bowling = new Bowling();
-        let i;
         expect(bowling.isGameOver()).toBeFalsy();
-        for (i = 1; i <= 20; i++) {
+        for (let i = 1; i <= 20; i++) {
             bowling.roll(1);
         }
 
@@ -114,5 +113,18 @@ describe("Bowling game", function () {
        bowling.roll(2);
 
        expect(bowling.score()).toBe(20);
+    });
+
+    it("A spare in the first frame, followed by three pins, followed by all misses scores 16", function () {
+        let bowling = new Bowling();
+
+        bowling.roll(1);
+        bowling.roll(9);
+        bowling.roll(3);
+        for (let i = 1; i <= 17; i++) {
+            bowling.roll(0);
+        }
+
+        expect(bowling.score()).toBe(16);
     });
 });
