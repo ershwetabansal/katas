@@ -1,67 +1,109 @@
 class Bowling {
 
     constructor() {
-        this.points = 0;
-        this.totalRolls = 0;
         this.scoreBoard = [];
-        this.currentFrame = [];
+        this.frame = {
+            number : 1,
+            pins : []
+        };
     }
 
     roll(pins) {
         this.validate(pins);
-
-        if (this.isSpare() || this.isLastFrameWasStrike()) {
-            pins += pins;
-        }
-
-        this.points = this.points + pins;
-        this.resetCurrentFrameAfterTwoRolls();
-        this.currentFrame.push(pins);
+        this.resetThisFrame();
+        this.frame.pins.push(pins);
         this.updateScoreBoard();
-        this.totalRolls ++;
         return true;
     }
 
-    isLastFrameWasStrike() {
-        return this.scoreBoard.length > 0 && this.scoreBoard[this.scoreBoard.length - 1].is_strike;
-    }
-
     score() {
-        return this.points;
-    }
-
-    totalFrames() {
-        return Math.floor(this.totalRolls / 2);
-    }
-
-    resetCurrentFrameAfterTwoRolls() {
-        if (this.currentFrame.length === 2) {
-            this.currentFrame = [];
+        let score = 0;
+        for (let i = 0; i < this.scoreBoard.length; i++) {
+            score += this.scoreBoard[i].score[0] + (this.scoreBoard[i].score[1] ? this.scoreBoard[i].score[1] : 0);
         }
+
+        return score;
     }
 
     isGameOver() {
-        return this.totalFrames() >= 10;
+        if (this.scoreBoard.length < 10 || (!this.scoreBoard[9].is_strike && this.scoreBoard[9].score.length < 2)) {
+            return false;
+        }
+
+        if (this.scoreBoard.length >= 10 && this.scoreBoard[9].is_strike) {
+            if ((this.frame.number === 11 && this.frame.pins.length === 2) || (this.frame.number === 12)) {
+                return true;
+            }
+            return false;
+        }
+
+        if (this.scoreBoard.length >= 10 && this.scoreBoard[9].is_spare) {
+            if (this.frame.number === 11 && this.frame.pins.length === 1) {
+                return true;
+            }
+            return false;
+        }
+
+        return true;
     }
 
     updateScoreBoard() {
-        if (this.currentFrame.length === 1 && this.isStrike()) {
-            this.currentFrame.push(0);
-            this.totalRolls++;
+        if (this.frame.number > 1 && this.frame.number <= 10) {
+
+            // If last frame had a strike
+            if (this.scoreBoard[this.frame.number - 2].is_strike) {
+                this.scoreBoard[this.frame.number - 2].score[0] += this.frame.pins[this.frame.pins.length - 1];
+            }
+
+            // If last frame was strike and second last frame was also strike
+            if (this.frame.number > 2 &&
+                this.frame.pins.length === 1 &&
+                this.scoreBoard[this.frame.number - 2].is_strike &&
+                this.scoreBoard[this.frame.number - 3].is_strike) {
+                this.scoreBoard[this.frame.number - 3].score[0] += this.frame.pins[0];
+            }
+
+            // If last frame had spare then award bonus
+            if (this.scoreBoard[this.frame.number - 2].is_spare && this.frame.pins.length === 1){
+                this.scoreBoard[this.frame.number - 2].score[1] += this.frame.pins[0];
+            }
         }
 
-        if (this.currentFrame.length === 2) {
-            this.scoreBoard.push({
-                is_strike : this.isStrike(),
-                is_spare : this.isSpare(),
-                score : this.currentFrame
-            });
+        if (this.frame.number > 10 && this.scoreBoard[9].is_strike) {
+            this.scoreBoard[9].score[0] += this.frame.pins[0];
+
+            if (this.frame.number === 11 && this.scoreBoard[8].is_strike) {
+                this.scoreBoard[8].score[0] += this.frame.pins[0];
+            }
+        }
+
+        if (this.frame.number > 10 && this.scoreBoard[9].is_spare) {
+            this.scoreBoard[9].score[0] += this.frame.pins[0];
+        }
+
+        let scoreboard = {
+            is_strike : this.isStrike(),
+            is_spare : this.isSpare(),
+            score : this.frame.pins
+        };
+
+        if (this.scoreBoard[this.frame.number - 1]) {
+            this.scoreBoard[this.frame.number - 1] = scoreboard;
+        } else if (this.scoreBoard.length < 10) {
+            this.scoreBoard.push(scoreboard);
+        }
+    }
+
+    resetThisFrame() {
+        if (this.frame.pins.length === 2 || this.isStrike()) {
+            this.frame.number ++;
+            this.frame.pins = [];
         }
     }
 
     isSpare() {
-        if (this.currentFrame.length === 2 && !this.isStrike()) {
-            return (this.currentFrame[0] + this.currentFrame[1]) === 10;
+        if (this.frame.pins.length === 2 && !this.isStrike()) {
+            return (this.frame.pins[0] + this.frame.pins[1]) === 10;
         }
 
         return false;
@@ -73,8 +115,8 @@ class Bowling {
         }
 
         let leftOverPins = 10;
-        if (this.currentFrame.length === 1 && this.currentFrame[0] !== 10) {
-            leftOverPins -= this.currentFrame[0];
+        if (this.frame.pins.length === 1 && this.frame.pins[0] < 10) {
+            leftOverPins -= this.frame.pins[0];
         }
 
         if (pins > leftOverPins) {
@@ -84,8 +126,8 @@ class Bowling {
     }
 
     isStrike() {
-        if (this.currentFrame.length >= 1) {
-            return this.currentFrame[0] === 10;
+        if (this.frame.pins.length >= 1) {
+            return this.frame.pins[0] >= 10;
         }
 
         return false;
