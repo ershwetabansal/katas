@@ -100,7 +100,7 @@ class Bowling {
         }
 
         if (this.frame.number > 10 && this.scoreBoard[9].is_spare) {
-            this.scoreBoard[9].score[0] += this.frame.pins[0];
+            this.scoreBoard[9].score[1] += this.frame.pins[0];
         }
 
         let scoreboard = {
