@@ -1,0 +1,49 @@
+{
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "script",
+    "ecmaFeatures": {
+      "impliedStrict": true
+    }
+  },
+  "rules": {
+    // enable additional rules
+    "indent": ["error", 4],
+    "quotes": ["error", "double"],
+    "semi": ["error", "always"],
+    "no-unused-vars" : ["warn"],
+
+    // override default options for rules from base configurations
+    "comma-dangle": ["error", "always"],
+    "no-cond-assign": ["error", "always"],
+    "valid-jsdoc" : ["error",
+      {
+        "preferType": {
+          "Boolean": "boolean",
+          "Number": "number",
+          "object": "Object",
+          "String": "string"
+        },
+        "requireReturn": false,
+        "requireReturnDescription": false,
+        "requireParamDescription": false
+      }
+    ],
+    "require-jsdoc": ["error", {
+      "require": {
+        "FunctionDeclaration": true,
+        "MethodDefinition": true,
+        "ClassDeclaration": true
+      }
+    }
+    ]
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "jasmine": true,
+    "protractor": true,
+    "jquery": true
+  }
+}
