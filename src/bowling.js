@@ -1,13 +1,25 @@
+/**
+ * Bowling game.
+ */
 class Bowling {
 
+    /**
+     * @constructor
+     */
     constructor() {
         this.scoreBoard = [];
         this.frame = {
             number : 1,
-            pins : []
+            pins : [],
         };
     }
 
+    /**
+     * Player rolls the ball.
+     *
+     * @param {number} pins
+     * @return {boolean}
+     */
     roll(pins) {
         this.validate(pins);
         this.resetThisFrame();
@@ -16,6 +28,11 @@ class Bowling {
         return true;
     }
 
+    /**
+     * Score of the game at any instance.
+     *
+     * @return {number}
+     */
     score() {
         let score = 0;
         for (let i = 0; i < this.scoreBoard.length; i++) {
@@ -25,6 +42,11 @@ class Bowling {
         return score;
     }
 
+    /**
+     * Is the game over?
+     *
+     * @return {boolean}
+     */
     isGameOver() {
         // Game is not over until 10 frames are reached
         if (this.scoreBoard.length < 10 || (!this.scoreBoard[9].is_strike && this.scoreBoard[9].score.length < 2)) {
@@ -46,6 +68,11 @@ class Bowling {
         return true;
     }
 
+    /**
+     * Did the last frame caused a spare?
+     *
+     * @return {boolean}
+     */
     isSpare() {
         if (this.frame.pins.length === 2 && !this.isStrike()) {
             return (this.frame.pins[0] + this.frame.pins[1]) === 10;
@@ -54,6 +81,11 @@ class Bowling {
         return false;
     }
 
+    /**
+     * Did the last frame caused a strike?
+     *
+     * @return {boolean}
+     */
     isStrike() {
         if (this.frame.pins.length >= 1) {
             return this.frame.pins[0] >= 10;
@@ -62,6 +94,9 @@ class Bowling {
         return false;
     }
 
+    /**
+     * Reset frame to start for the new frame.
+     */
     resetThisFrame() {
         if (this.frame.pins.length === 2 || this.isStrike()) {
             this.frame.number ++;
@@ -69,6 +104,9 @@ class Bowling {
         }
     }
 
+    /**
+     * Update score board after the last roll.
+     */
     updateScoreBoard() {
         if (this.frame.number > 1 && this.frame.number <= 10) {
 
@@ -106,7 +144,7 @@ class Bowling {
         let scoreboard = {
             is_strike : this.isStrike(),
             is_spare : this.isSpare(),
-            score : this.frame.pins
+            score : this.frame.pins,
         };
 
         if (this.scoreBoard[this.frame.number - 1]) {
@@ -116,6 +154,12 @@ class Bowling {
         }
     }
 
+    /**
+     * Are the given pins valid?
+     *
+     * @param {number} pins
+     * @return {boolean}
+     */
     validate(pins) {
         if (this.isGameOver()) {
             throw new Error("Game over");
@@ -127,7 +171,7 @@ class Bowling {
         }
 
         if (pins > leftOverPins) {
-            throw new Error("Wrong input, only "+ leftOverPins +" pins can be knocked down.")
+            throw new Error("Wrong input, only "+ leftOverPins +" pins can be knocked down.");
         }
         return true;
     }
