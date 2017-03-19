@@ -4,13 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "tests/**/*Spec.js"
+    "precommit": "npm run lint",
+    "lint": ". ./eslint.sh",
+    "test": "tests/**/*.spec.js"
   },
   "author": "",
   "license": "Proprietary",
-  "devDependencies": {
-
-  },
   "dependencies": {
     "babel-preset-es2015": "^6.18.0",
     "jasmine": "^2.5.2",
@@ -22,5 +21,14 @@
     "karma-webpack": "^1.8.1",
     "webpack": "^1.14.0",
     "express": "^4.14.0"
+  },
+  "devDependencies": {
+    "eslint": "^3.18.0",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.10.0",
+    "husky": "^0.13.2",
+    "istanbul": "^0.4.5"
   }
 }
