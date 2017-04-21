@@ -60,3 +60,77 @@ describe('`Array.of` creates an array with the given arguments as elements', () 
   });
 
 });
+
+
+describe('`Array.prototype.fill` can fill up an array with one value', () => {
+
+  it('`fill(0)` will populate `0` into each array element', function() {
+    const arr = new Array(3).fill(0);
+
+    expect(arr).toBe([0, 0, 0]);
+  });
+
+  it('fill only changes content, adds no new elements', function() {
+    const arr = [].fill();
+
+    expect(arr).toBe([]);
+  });
+
+  it('second parameter to `fill()` is the position where to start filling', function() {
+    const fillPosition = 2;
+    const arr = [1,2,3].fill(42, fillPosition);
+
+    expect(arr).toBe([1, 2, 42]);
+  });
+
+  it('third parameter is the position where filling stops', function() {
+    const fillStartAt = 1;
+    const fillEndAt = 2;
+    const arr = [1,2,3].fill(42, fillStartAt, fillEndAt);
+
+    expect(arr).toBe([1, 42, 3]);
+  });
+
+});
+
+// 42: array - `Array.prototype.keys`
+// To do: make all tests pass, leave the assert lines unchanged!
+
+describe('`Array.prototype.keys` returns an iterator for all keys in the array', () => {
+
+  it('`keys()` returns an iterator', function() {
+    const arr = ['a'];
+    const iterator = arr.keys();
+
+    assert.deepEqual(iterator.next(), {value: 0, done: false});
+    assert.deepEqual(iterator.next(), {value: void 0, done: true});
+  });
+
+  it('gets all keys', function() {
+    const arr = [1, 2, 3];
+    const keys = Array.from(arr.keys());
+
+    assert.deepEqual(keys, [0, 1, 2]);
+  });
+
+  it('empty array contains no keys', function() {
+    const arr = [];
+    const keys = [...arr.keys()];
+
+    assert.equal(keys.length, 0);
+  });
+
+  it('a sparse array without real values has keys though', function() {
+    const arr = [,,];
+    const keys = [...arr.keys()];
+
+    assert.deepEqual(keys, [0, 1]);
+  });
+
+  it('also includes holes in sparse arrays', function() {
+    const arr = ['a', , 'c'];
+    const keys = [...arr.keys()];
+
+    assert.deepEqual(keys, [0, 1, 2]);
+  });
+});
