@@ -93,8 +93,6 @@ describe('`Array.prototype.fill` can fill up an array with one value', () => {
 
 });
 
-// 42: array - `Array.prototype.keys`
-// To do: make all tests pass, leave the assert lines unchanged!
 
 describe('`Array.prototype.keys` returns an iterator for all keys in the array', () => {
 
@@ -102,35 +100,35 @@ describe('`Array.prototype.keys` returns an iterator for all keys in the array',
     const arr = ['a'];
     const iterator = arr.keys();
 
-    assert.deepEqual(iterator.next(), {value: 0, done: false});
-    assert.deepEqual(iterator.next(), {value: void 0, done: true});
+    expect(iterator.next()).toEqual({value: 0, done: false});
+    expect(iterator.next()).toEqual({value: void 0, done: true});
   });
 
   it('gets all keys', function() {
     const arr = [1, 2, 3];
     const keys = Array.from(arr.keys());
 
-    assert.deepEqual(keys, [0, 1, 2]);
+    expect(keys).toEqual([0, 1, 2]);
   });
 
   it('empty array contains no keys', function() {
     const arr = [];
     const keys = [...arr.keys()];
 
-    assert.equal(keys.length, 0);
+    expect(keys.length).toBe(0);
   });
 
   it('a sparse array without real values has keys though', function() {
     const arr = [,,];
     const keys = [...arr.keys()];
 
-    assert.deepEqual(keys, [0, 1]);
+    expect(keys).toEqual([0, 1]);
   });
 
   it('also includes holes in sparse arrays', function() {
     const arr = ['a', , 'c'];
     const keys = [...arr.keys()];
 
-    assert.deepEqual(keys, [0, 1, 2]);
+    expect(keys).toEqual([0, 1, 2]);
   });
 });
